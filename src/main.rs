@@ -17,21 +17,24 @@ fn day_three() -> io::Result<()> {
     let reader = BufReader::new(file);
 
     let mut current_sum = 0;
+    let lines_as_vec: Vec<String> = reader.lines().map(|l| l.unwrap()).collect();
 
-    for line in reader.lines() {
-        let line = line?;
-        let half = line.len() / 2;
-        // slice the line into two parts
-        let (left, right) = line.split_at(half);
-        let right_chars: Vec<char> = right.chars().collect();
+    for (i, line) in lines_as_vec.iter().enumerate() {
+        if i == 0 || i % 3 == 0 {
+            // I HAVE NO IDEA WHY I NEED THIS IF STATEMENT
+            if i + 1 < lines_as_vec.len() {
+                let line2: Vec<char> = lines_as_vec[i + 1].chars().collect();
+                let line3: Vec<char> = lines_as_vec[i + 2].chars().collect();
 
-        // iterate over the left side
-        for char in left.chars() {
-            // if the character is in the right side
-            if right_chars.contains(&char) {
-                let index = alphabet.iter().position(|&c| c == char).unwrap();
-                current_sum += index + 1;
-                break;
+                // iterate over the left side
+                for char in line.chars() {
+                    // if the character is in the right side
+                    if line2.contains(&char) && line3.contains(&char) {
+                        let index = alphabet.iter().position(|&c| c == char).unwrap();
+                        current_sum += index + 1;
+                        break;
+                    }
+                }
             }
         }
     }
@@ -83,59 +86,6 @@ fn day_two() -> io::Result<()> {
 
         // 1 for Rock, 2 for Paper, 3 for Scissors
 
-        // a is for Rock, b is for Paper, c is for Scissors
-        // a > c > b > a
-        // x is for Rock, y is for Paper, z is for Scissors
-        // x > z > y > x
-
-        // PART ONE
-
-        // // for rock
-        // if first_char == 'A' && last_char == 'X' {
-        //     // 1 + 3
-        //     result += 4;
-        // }
-        // if first_char == 'A' && last_char == 'Y' {
-        //     // 2 + 6
-        //     result += 8;
-        // }
-        // if first_char == 'A' && last_char == 'Z' {
-        //     // 3 + 0
-        //     result += 3;
-        // }
-        //
-        // // for paper
-        // if first_char == 'B' && last_char == 'X' {
-        //     // 1 + 0
-        //     result += 1;
-        // }
-        // if first_char == 'B' && last_char == 'Y' {
-        //     // 2 + 3
-        //     result += 5;
-        // }
-        // if first_char == 'B' && last_char == 'Z' {
-        //     // 3 + 6
-        //     result += 9;
-        // }
-        //
-        // // for scissors
-        // if first_char == 'C' && last_char == 'X' {
-        //     // 1 + 6
-        //     result += 7;
-        // }
-        // if first_char == 'C' && last_char == 'Y' {
-        //     // 2 + 0
-        //     result += 2;
-        // }
-        // if first_char == 'C' && last_char == 'Z' {
-        //     // 3 + 3
-        //     result += 6;
-        // }
-
-        // PART TWO
-
-        // 1 for Rock, 2 for Paper, 3 for Scissors
-
         // X for lose, Y for draw, Z for lose
         // for rock
         if first_char == 'A' && last_char == 'X' {
@@ -150,7 +100,6 @@ fn day_two() -> io::Result<()> {
             // 2 + 6
             result += 8;
         }
-
         // for paper
         if first_char == 'B' && last_char == 'X' {
             // 1 + 0
@@ -164,7 +113,6 @@ fn day_two() -> io::Result<()> {
             // 3 + 6
             result += 9;
         }
-
         // for scissors
         if first_char == 'C' && last_char == 'X' {
             // 2 + 0
