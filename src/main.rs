@@ -11,21 +11,31 @@ fn main() -> io::Result<()> {
 }
 
 fn day_three() -> io::Result<()> {
+    let alphabet: Vec<char> = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".chars().collect();
 
     let file = File::open("day3.input")?;
     let reader = BufReader::new(file);
+
+    let mut current_sum = 0;
 
     for line in reader.lines() {
         let line = line?;
         let half = line.len() / 2;
         // slice the line into two parts
         let (left, right) = line.split_at(half);
+        let right_chars: Vec<char> = right.chars().collect();
+
+        // iterate over the left side
         for char in left.chars() {
-            if right.chars().any(|c| c == char) {
-                println!("Found a match: {}", char);
+            // if the character is in the right side
+            if right_chars.contains(&char) {
+                let index = alphabet.iter().position(|&c| c == char).unwrap();
+                current_sum += index + 1;
+                break;
             }
         }
     }
+    println!("{}", current_sum);
 
     Ok(())
 }
