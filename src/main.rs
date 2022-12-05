@@ -4,41 +4,33 @@ use std::io::{self, prelude::*, BufReader};
 fn main() -> io::Result<()> {
     // day_one()
     // day_two();
-    day_three();
+    // day_three();
+    day_four();
 
     println!("Have a nice day!");
     Ok(())
 }
 
-fn day_three() -> io::Result<()> {
-    let alphabet: Vec<char> = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".chars().collect();
-
-    let file = File::open("day3.input")?;
+fn day_four() -> io::Result<()> {
+    let file = File::open("day4.input")?;
     let reader = BufReader::new(file);
 
-    let mut current_sum = 0;
-    let lines_as_vec: Vec<String> = reader.lines().map(|l| l.unwrap()).collect();
+    let mut lines_with_dup = 0;
 
-    for (i, line) in lines_as_vec.iter().enumerate() {
-        if i == 0 || i % 3 == 0 {
-            // I HAVE NO IDEA WHY I NEED THIS IF STATEMENT
-            if i + 1 < lines_as_vec.len() {
-                let line2: Vec<char> = lines_as_vec[i + 1].chars().collect();
-                let line3: Vec<char> = lines_as_vec[i + 2].chars().collect();
 
-                // iterate over the left side
-                for char in line.chars() {
-                    // if the character is in the right side
-                    if line2.contains(&char) && line3.contains(&char) {
-                        let index = alphabet.iter().position(|&c| c == char).unwrap();
-                        current_sum += index + 1;
-                        break;
-                    }
-                }
-            }
+    for line in reader.lines() {
+        let line = line?;
+        let divided_line = line.split(",").collect::<Vec<&str>>();
+        let divided_left = divided_line[0].split("-").collect::<Vec<&str>>();
+        let full_left = (divided_left[0].parse::<i32>().unwrap()..divided_left[1].parse::<i32>().unwrap() + 1).collect::<Vec<i32>>();
+        let divided_right = divided_line[1].split("-").collect::<Vec<&str>>();
+        let full_right = (divided_right[0].parse::<i32>().unwrap()..divided_right[1].parse::<i32>().unwrap() + 1).collect::<Vec<i32>>();
+        if full_left.iter().all(|item| full_right.contains(item)) || full_right.iter().all(|item| full_left.contains(item)) {
+            lines_with_dup += 1;
         }
     }
-    println!("{}", current_sum);
+
+    println!("{}", lines_with_dup);
 
     Ok(())
 }
@@ -128,6 +120,40 @@ fn day_two() -> io::Result<()> {
         }
     }
     println!("{}", result);
+
+    Ok(())
+}
+
+
+fn day_three() -> io::Result<()> {
+    let alphabet: Vec<char> = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".chars().collect();
+
+    let file = File::open("day3.input")?;
+    let reader = BufReader::new(file);
+
+    let mut current_sum = 0;
+    let lines_as_vec: Vec<String> = reader.lines().map(|l| l.unwrap()).collect();
+
+    for (i, line) in lines_as_vec.iter().enumerate() {
+        if i == 0 || i % 3 == 0 {
+            // I HAVE NO IDEA WHY I NEED THIS IF STATEMENT
+            if i + 1 < lines_as_vec.len() {
+                let line2: Vec<char> = lines_as_vec[i + 1].chars().collect();
+                let line3: Vec<char> = lines_as_vec[i + 2].chars().collect();
+
+                // iterate over the left side
+                for char in line.chars() {
+                    // if the character is in the right side
+                    if line2.contains(&char) && line3.contains(&char) {
+                        let index = alphabet.iter().position(|&c| c == char).unwrap();
+                        current_sum += index + 1;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    println!("{}", current_sum);
 
     Ok(())
 }
