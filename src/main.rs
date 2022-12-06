@@ -5,33 +5,63 @@ fn main() -> io::Result<()> {
     // day_one()
     // day_two();
     // day_three();
-    day_four();
+    // day_four();
+    day_five();
 
     println!("Have a nice day!");
     Ok(())
 }
 
-fn day_four() -> io::Result<()> {
-    let file = File::open("day4.input")?;
+fn day_five() -> io::Result<()> {
+    /*      [M]     [B]             [N]
+    [T]     [H]     [V] [Q]         [H]
+    [Q]     [N]     [H] [W] [T]     [Q]
+    [V]     [P] [F] [Q] [P] [C]     [R]
+    [C]     [D] [T] [N] [N] [L] [S] [J]
+    [D] [V] [W] [R] [M] [G] [R] [N] [D]
+    [S] [F] [Q] [Q] [F] [F] [F] [Z] [S]
+    [N] [M] [F] [D] [R] [C] [W] [T] [M]
+     1   2   3   4   5   6   7   8   9
+
+     1 param - amount
+     2 param - from
+     3 param - to */
+
+    let file = File::open("day5.input")?;
     let reader = BufReader::new(file);
 
-    let mut lines_with_dup = 0;
+    let mut base: Vec<Vec<&str>> = Vec::new();
+    base.push(Vec::from(["N", "S", "D", "C", "V", "Q", "T"]));
+    base.push(Vec::from(["M", "F", "V"]));
+    base.push(Vec::from(["F", "Q", "W", "D", "P", "N", "H", "M"]));
+    base.push(Vec::from(["D", "Q", "R", "T", "F"]));
+    base.push(Vec::from(["R", "F", "M", "N", "Q", "H", "V", "B"]));
+    base.push(Vec::from(["C", "F", "G", "N", "P", "W", "Q"]));
+    base.push(Vec::from(["W", "F", "R", "L", "C", "T"]));
+    base.push(Vec::from(["T", "Z", "N", "S"]));
+    base.push(Vec::from(["M", "S", "D", "J", "R", "Q", "H", "N"]));
+    // base.push(Vec::from(["Z", "N"]));
+    // base.push(Vec::from(["M", "C", "D"]));
+    // base.push(Vec::from(["P"]));
+    /* test data
+1,2,1
+3,1,3
+2,2,1
+1,1,2
+     */
 
     for line in reader.lines() {
         let line = line?;
-        let divided_line = line.split(",").collect::<Vec<&str>>();
-        let divided_left = divided_line[0].split("-").collect::<Vec<&str>>();
-        let full_left = (divided_left[0].parse::<i32>().unwrap()..divided_left[1].parse::<i32>().unwrap() + 1).collect::<Vec<i32>>();
-        let divided_right = divided_line[1].split("-").collect::<Vec<&str>>();
-        let full_right = (divided_right[0].parse::<i32>().unwrap()..divided_right[1].parse::<i32>().unwrap() + 1).collect::<Vec<i32>>();
-        // probably a better way to do this is to just make a vector of all the numbers and then check if there are any duplicates
-        // but I don't care enough to do that
-        if full_left.iter().any(|&x| full_right.contains(&x)) || full_right.iter().any(|&x| full_left.contains(&x)) {
-            lines_with_dup += 1;
+        let split_line = line.split(",").collect::<Vec<&str>>();
+        for _ in 0..split_line[0].parse().unwrap() {
+            let from_crate = base[(split_line[1].parse::<i32>().unwrap() - 1) as usize].pop();
+            base[(split_line[2].parse::<i32>().unwrap() - 1) as usize].push(from_crate.unwrap());
         }
     }
 
-    println!("{}", lines_with_dup);
+    for i in 0..base.len() {
+        print!("{}", base[i].last().unwrap());
+    }
 
     Ok(())
 }
@@ -155,6 +185,32 @@ fn day_three() -> io::Result<()> {
         }
     }
     println!("{}", current_sum);
+
+    Ok(())
+}
+
+fn day_four() -> io::Result<()> {
+    let file = File::open("day4.input")?;
+    let reader = BufReader::new(file);
+
+    let mut lines_with_dup = 0;
+
+    for line in reader.lines() {
+        let line = line?;
+        let divided_line = line.split(",").collect::<Vec<&str>>();
+        let divided_left = divided_line[0].split("-").collect::<Vec<&str>>();
+        let full_left = (divided_left[0].parse::<i32>().unwrap()..divided_left[1].parse::<i32>().unwrap() + 1).collect::<Vec<i32>>();
+        let divided_right = divided_line[1].split("-").collect::<Vec<&str>>();
+        let full_right = (divided_right[0].parse::<i32>().unwrap()..divided_right[1].parse::<i32>().unwrap() + 1).collect::<Vec<i32>>();
+        // probably a better way to do this is to just make a vector of all the numbers and then check if there are any duplicates
+        // but I don't care enough to do that
+        // also right part is useless probably, but  I have a  feeling that I need it for some cases
+        if full_left.iter().any(|&x| full_right.contains(&x)) || full_right.iter().any(|&x| full_left.contains(&x)) {
+            lines_with_dup += 1;
+        }
+    }
+
+    println!("{}", lines_with_dup);
 
     Ok(())
 }
