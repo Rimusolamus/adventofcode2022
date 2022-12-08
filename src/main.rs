@@ -1,12 +1,14 @@
 use std::fs::File;
 use std::io::{self, prelude::*, BufReader};
+use std::str::Chars;
 
 fn main() -> io::Result<()> {
     // day_one()
     // day_two();
     // day_three();
     // day_four();
-    day_five();
+    // day_five();
+    day_six();
 
     println!("Have a nice day!");
     Ok(())
@@ -199,7 +201,6 @@ fn day_five() -> io::Result<()> {
         let final_len = base[(split_line[1].parse::<i32>().unwrap() - 1) as usize].len().saturating_sub(split_line[0].parse::<i32>().unwrap() as usize);
         base[(split_line[1].parse::<i32>().unwrap() - 1) as usize].truncate(final_len);
         base[(split_line[2].parse::<i32>().unwrap() - 1) as usize].append(&mut from_crate.clone());
-
     }
 
     for i in 0..base.len() {
@@ -207,4 +208,34 @@ fn day_five() -> io::Result<()> {
     }
 
     Ok(())
+}
+
+fn day_six() -> io::Result<()> {
+    let file = File::open("day6.input")?;
+    let reader = BufReader::new(file);
+    // only one line in the file is presented
+    for line in reader.lines() {
+        let line = line?;
+        for i in 0..(&line.len() - 13) {
+            if is_unique(&line[i..i + 14]) {
+                println!("{} is unique", &line[i..i + 14]);
+                println!("{}", i + 14);
+                break;
+            }
+        }
+    }
+
+    println!("Have a nice day!");
+    Ok(())
+}
+
+// check if all chars in the string are unique
+fn is_unique(s: &str) -> bool {
+    let mut chars = s.chars();
+    let mut unique = true;
+    while unique && chars.clone().count() > 0 {
+        let c = chars.next().unwrap();
+        unique = !chars.clone().any(|x| x == c);
+    }
+    unique
 }
