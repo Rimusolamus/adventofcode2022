@@ -16,7 +16,7 @@ pub(crate) fn day_five() -> io::Result<()> {
      2 param - from
      3 param - to */
 
-    let file = File::open("day5.input")?;
+    let file = File::open("inputs/day5.input")?;
     let reader = BufReader::new(file);
 
     let mut base: Vec<Vec<&str>> = Vec::new();

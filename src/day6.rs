@@ -3,7 +3,7 @@ use std::io::{self, prelude::*, BufReader};
 
 
 pub(crate) fn day_six() -> io::Result<()> {
-    let file = File::open("day6.input")?;
+    let file = File::open("inputs/day6.input")?;
     let reader = BufReader::new(file);
     // only one line in the file is presented
     for line in reader.lines() {

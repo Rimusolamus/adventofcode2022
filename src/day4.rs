@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::{self, prelude::*, BufReader};
 
 pub(crate) fn day_four() -> io::Result<()> {
-    let file = File::open("day4.input")?;
+    let file = File::open("inputs/day4.input")?;
     let reader = BufReader::new(file);
 
     let mut lines_with_dup = 0;

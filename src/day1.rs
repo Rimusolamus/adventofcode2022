@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::{self, prelude::*, BufReader};
 
 pub(crate) fn day_one() -> io::Result<()> {
-    let file = File::open("input.txt")?;
+    let file = File::open("inputs/input.txt")?;
     let reader = BufReader::new(file);
 
     let mut current_sum = 0;

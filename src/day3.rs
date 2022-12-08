@@ -4,7 +4,7 @@ use std::io::{self, prelude::*, BufReader};
 pub(crate) fn day_three() -> io::Result<()> {
     let alphabet: Vec<char> = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".chars().collect();
 
-    let file = File::open("day3.input")?;
+    let file = File::open("inputs/day3.input")?;
     let reader = BufReader::new(file);
 
     let mut current_sum = 0;
