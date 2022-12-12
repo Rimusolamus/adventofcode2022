@@ -1,5 +1,6 @@
 use std::fs::File;
 use std::io::{self, prelude::*, BufReader};
+use ndarray::Array2;
 
 pub(crate) fn day_eight() -> io::Result<()> {
     let file = File::open("inputs/day8.input")?;
@@ -14,61 +15,103 @@ pub(crate) fn day_eight() -> io::Result<()> {
             row.push(c.to_digit(10).unwrap());
         }
         matrix.push(row);
-    }
-    println!("Part1 visible trees: {}", matrix.iter()
-        .enumerate()
-        .map(|(y, line)| line.iter()
-            .enumerate()
-            .filter(|(x, _)| look(*x, y, &matrix).0)
-            .count())
-        .sum::<usize>());
+    };
 
-    println!("Part2 scenic score: {}", matrix.iter()
-        .enumerate()
-        .map(|(y, line)| line.iter()
-            .enumerate()
-            .map(|(x, _)| look(x, y, &matrix).1)
-            .max().expect("Must have tres"))
-        .max().expect("Must have tree rows"));
-    Ok(())
-}
-
-fn look(x: usize, y: usize, map: &Vec<Vec<u32>>) -> (bool, usize) {
-    let current_tree = map[y][x];
-
-    let y_max = map.len() as i32;
-    let x_max = map[0].len() as i32;
-    let ray_max = y_max.max(x_max);
-
-    let dirs: Vec<(i32, i32)> = vec![
-        (0, -1), // Up
-        (0, 1), // Down
-        (-1, 0), // Left
-        (1, 0), // Right
-    ];
-
-    let mut trees = Vec::new();
-    let mut outside_visible = false;
-    for dir in dirs {
-        // "Shoot" in dir until border
-        for length in 1..ray_max {
-            let new_x = x as i32 + (dir.0 * length);
-            let new_y = y as i32 + (dir.1 * length);
-            if new_x < 0 || new_y < 0 || new_x >= x_max || new_y >= y_max {
-                let prev_x = (x as i32 + (dir.0 * (length - 1))) as usize;
-                let prev_y = (y as i32 + (dir.1 * (length - 1))) as usize;
-                let trees_seen_to_border = (x.max(prev_x) - x.min(prev_x)) + (y.max(prev_y) - y.min(prev_y));
-                trees.push(trees_seen_to_border);
-                outside_visible = true;
-                break;
+    // generate zeroes matrix
+    let mut result_matrix = Array2::<u32>::zeros((matrix.len(), matrix.len()));
+    // print result matrix
+    for y in 0..matrix.len() {
+        for x in 0..matrix.len() {
+            if visible_to_left(&matrix, x, y) {
+                if matrix[y][x] == 0 { result_matrix[[y, x]] = 10 } else {
+                    result_matrix[[y, x]] = matrix[y][x];
+                }
             }
-
-            if map[new_y as usize][new_x as usize] >= current_tree {
-                let trees_seen_to_border = (x.max(new_x as usize) - x.min(new_x as usize)) + (y.max(new_y as usize) - y.min(new_y as usize));
-                trees.push(trees_seen_to_border);
-                break;
+            if visible_to_right(&matrix, x, y) {
+                if matrix[y][x] == 0 { result_matrix[[y, x]] = 10 } else {
+                    result_matrix[[y, x]] = matrix[y][x];
+                }
+            }
+            if visible_to_top(&matrix, x, y) {
+                if matrix[y][x] == 0 { result_matrix[[y, x]] = 10 } else {
+                    result_matrix[[y, x]] = matrix[y][x];
+                }
+            }
+            if visible_to_bottom(&matrix, x, y) {
+                if matrix[y][x] == 0 { result_matrix[[y, x]] = 10 } else {
+                    result_matrix[[y, x]] = matrix[y][x];
+                }
             }
         }
     }
-    return (outside_visible, trees.iter().fold(1, |acc, v| acc * v));
+    println!("{:?}", result_matrix);
+
+    // number of non-none elements
+    let mut count = 0;
+    for row in result_matrix.genrows() {
+        for elem in row.iter() {
+            if *elem != 0 {
+                count += 1;
+            }
+        }
+    }
+
+    println!("{:?}", count);
+    Ok(())
+}
+
+fn visible_to_left(matrix: &Vec<Vec<u32>>, x: usize, y: usize) -> bool {
+    let mut visible = true;
+    if x == 0 {
+        visible = true;
+    } else {
+        for i in 0..x {
+            if matrix[y][i] >= matrix[y][x] {
+                visible = false
+            }
+        }
+    }
+    return visible;
+}
+
+fn visible_to_right(matrix: &Vec<Vec<u32>>, x: usize, y: usize) -> bool {
+    let mut visible = true;
+    if x == matrix[0].len() - 1 {
+        visible = true;
+    } else {
+        for i in x + 1..matrix[0].len() {
+            if matrix[y][i] >= matrix[y][x] {
+                visible = false
+            }
+        }
+    }
+    return visible;
+}
+
+fn visible_to_top(matrix: &Vec<Vec<u32>>, x: usize, y: usize) -> bool {
+    let mut visible = true;
+    if y == 0 {
+        visible = true;
+    } else {
+        for i in 0..y {
+            if matrix[i][x] >= matrix[y][x] {
+                visible = false
+            }
+        }
+    }
+    return visible;
+}
+
+fn visible_to_bottom(matrix: &Vec<Vec<u32>>, x: usize, y: usize) -> bool {
+    let mut visible = true;
+    if y == matrix.len() - 1 {
+        visible = true;
+    } else {
+        for i in y + 1..matrix.len() {
+            if matrix[i][x] >= matrix[y][x] {
+                visible = false
+            }
+        }
+    }
+    return visible;
 }
