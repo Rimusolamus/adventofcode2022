@@ -25,23 +25,16 @@ pub(crate) fn day_eight() -> io::Result<()> {
     // print result matrix
     for y in 0..matrix.len() {
         for x in 0..matrix.len() {
-            let mut result = 1;
-            println!("$$$$$$$$$$$$$$$$$$$$$");
-            println!("{} &&&&&", matrix[y][x]);
-            println!("####################");
+            let mut result = 1;;
 
             let left = visible_to_left(&matrix, x, y);
             result *= left;
-            println!("{:?} - result of left", left);
             let right = visible_to_right(&matrix, x, y);
             result *= right;
-            println!("{:?} - result of right", right);
             let top = visible_to_top(&matrix, x, y);
             result *= top;
-            println!("{:?} - result of top", top);
             let bottom = visible_to_bottom(&matrix, x, y);
             result *= bottom;
-            println!("{:?} - result of bottom", bottom);
 
             if result > max {
                 max = result;
@@ -127,10 +120,8 @@ fn visible_to_bottom(matrix: &Vec<Vec<u32>>, x: usize, y: usize) -> i32 {
         if matrix[i][x] >= matrix[y][x] {
             return count+1;
         } else {
-            println!("plus 1");
             count += 1;
         }
     }
-    println!("end");
     return count;
 }
